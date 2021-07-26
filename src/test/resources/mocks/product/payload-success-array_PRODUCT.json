@@ -1,0 +1,12 @@
+[
+	{
+		"id": "1",
+		"name": "Televisão",
+		"price": 1500.99
+	},
+	{
+		"id": "2",
+		"name": "Geladeira",
+		"price": 800.99
+	}
+]

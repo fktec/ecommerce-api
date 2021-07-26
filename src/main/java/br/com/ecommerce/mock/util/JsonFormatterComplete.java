@@ -97,6 +97,20 @@ public class JsonFormatterComplete {
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static <T> List<T> jsonToArray(String json, Class<T> type) {
+		List<Map<String, Object>> jsonItems = jsonToObject(json, List.class);
+		
+		if (jsonItems != null) {
+			List<T> items = new ArrayList<>();
+			
+			for (Map<String, Object> jsonItem : jsonItems)
+				items.add(jsonToObject(objectToJson(jsonItem), type));
+			return items;
+		}
+		return null;
+	}
+	
 	public static <T> String stringToJson(String string, Class<T> type)
 	{
 		T obj = jsonToObject(string, type);

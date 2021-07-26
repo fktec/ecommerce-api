@@ -1,4 +1,4 @@
-package br.com.ecommerce.wishlist.api.resources.client;
+package br.com.ecommerce.wishlist.api.controller.client;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ import br.com.ecommerce.wishlist.domain.wishlist.WishlistItem;
 
 @RestController
 @RequestMapping("clients/{clientId}/products")
-public class ClientProductResource {
+public class ClientProductController {
 	
 	@Autowired
 	private WishlistItemService wishlistService; 

@@ -33,8 +33,9 @@ public class WishlistItem {
 	public String getId() {
 		return id;
 	}
-	public void setId(String id) {
+	public WishlistItem setId(String id) {
 		this.id = id;
+		return this;
 	}
 	public String getClientId() {
 		return clientId;

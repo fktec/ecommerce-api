@@ -1,4 +1,4 @@
-package br.com.ecommerce.wishlist.infra;
+package br.com.ecommerce.wishlist.infra.repository;
 
 import java.util.List;
 
@@ -10,10 +10,10 @@ import br.com.ecommerce.wishlist.domain.wishlist.IWishlistItemRepository;
 import br.com.ecommerce.wishlist.domain.wishlist.WishlistItem;
 
 @Repository(value = "wishlistItemRepository")
-public interface WishlistRepository extends MongoRepository<WishlistItem, String>, IWishlistItemRepository  {
+public interface WishlistItemRepository extends MongoRepository<WishlistItem, String>, IWishlistItemRepository  {
 
 	@Query(value = "{ 'clientId' : ?0 }")
-	List<WishlistItem> findAllByClientId(String clientId);
+	List<WishlistItem> findAllProductsByClientId(String clientId);
 	
 	@Query(value = "{ 'clientId' : ?0, 'productId': ?1 }")
 	WishlistItem findProductByClientId(String clientId, String productId);

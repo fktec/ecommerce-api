@@ -40,8 +40,10 @@ public class WishlistItemService {
 		return wishlistItemRepository.findProductByClientId(clientId, productId);
 	}
 	
-	public void addProductsByClient(String clientId, List<String> productIds) throws ClientNotFoundException {
-		List<WishlistItem> wishListEnriched = wishlistEnrichService.enrichProducts(WishlistDto.of().setClientId(clientId), productIds);
+	public void addProductsByClient(String clientId, List<String> productIds) {
+		List<WishlistItem> wishListEnriched = wishlistEnrichService.enrichProducts(WishlistDto.of()
+				.setClientId(clientId)
+				.setProductIds(productIds));
 		
 		if (wishListEnriched != null) {
 			for (WishlistItem wishlistItem : wishListEnriched) {
@@ -54,17 +56,18 @@ public class WishlistItemService {
 		}
 	}
 	
-	public void save(WishlistItem wishlistItem) {
-		mongoTemplate.insert(wishlistItem);
+	public WishlistItem save(WishlistItem wishlistItem) {
+		return mongoTemplate.insert(wishlistItem);
 	}
 	
-	public void update(WishlistItem currentWishlistItem) {
+	public WishlistItem update(WishlistItem currentWishlistItem) {
 		WishlistItem oldwishlistItem = wishlistItemRepository.findProductByClientId(currentWishlistItem.getClientId(), currentWishlistItem.getProductId());
 		
 		if (oldwishlistItem != null) {
 			currentWishlistItem.setId(oldwishlistItem.getId());
-			mongoTemplate.save(currentWishlistItem, WishlistItem.DOCUMENT_NAME);
+			return mongoTemplate.save(currentWishlistItem, WishlistItem.DOCUMENT_NAME);
 		}
+		return null;
 	}
 	
 	public void removeProductsByClient(String clientId, List<String> productIds) {

@@ -1,0 +1,20 @@
+[
+	{
+		"clientId": "1",
+		"productId": "1",
+		"product": {
+			"id": "1",
+			"name": "Televisão",
+			"price": 1500.99
+		}
+	},
+	{
+		"clientId": "1",
+		"productId": "2",
+		"product": {
+			"id": "2",
+			"name": "Geladeira",
+			"price": 800.99
+		}
+	}
+]

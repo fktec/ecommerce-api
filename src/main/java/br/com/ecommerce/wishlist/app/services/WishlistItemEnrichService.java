@@ -18,10 +18,10 @@ public class WishlistItemEnrichService {
 	@Autowired
 	private ProductService productService;
 	
-	public List<WishlistItem> enrichProducts(WishlistDto wishlistDto, List<String> productIds) {
-		if (productIds == null || productIds.isEmpty()) return Collections.emptyList();
+	public List<WishlistItem> enrichProducts(WishlistDto wishlistDto) {
+		if (wishlistDto.getProductIds() == null || wishlistDto.getProductIds().isEmpty()) return Collections.emptyList();
 		
-		List<Product> products = productService.findProductsByIds(productIds);
+		List<Product> products = productService.findProductsByIds(wishlistDto.getProductIds());
 		List<WishlistItem> wishlistItemsEnriched = new ArrayList<>();
 		
 		if (products != null) {
