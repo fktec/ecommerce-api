@@ -65,12 +65,11 @@ public class ClientProductController {
 	}
 	
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> addProductsByClient(@PathVariable(name = "clientId", required = true) String clientId, @RequestBody List<String> productIds) throws ValidationException {
-		requestValidation(productIds);
+	public ResponseEntity<Object> addProductByClient(@PathVariable(name = "clientId", required = true) String clientId, @RequestBody String productId) throws ValidationException {
 		try {
 			wishlistService.checkIfClientExists(clientId);
-			wishlistService.addProductsByClient(clientId, productIds);
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			wishlistService.addProductByClient(clientId, productId);
+			return new ResponseEntity<>(HttpStatus.OK);
 			
 		} catch (ClientNotFoundException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -79,13 +78,8 @@ public class ClientProductController {
 	
 	@DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> removeProductsByClient(@PathVariable(name = "clientId", required = true) String clientId, @RequestBody List<String> productIds) throws ValidationException {
-		requestValidation(productIds);
 		wishlistService.removeProductsByClient(clientId, productIds);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 	
-	private void requestValidation(List<String> productIds) throws ValidationException {
-		if (productIds == null || productIds.isEmpty()) 
-			throw new ValidationException("Product IDs cannot be null");
-	}
 }

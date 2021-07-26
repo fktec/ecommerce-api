@@ -10,9 +10,12 @@ public class WishlistMockTestUtil {
 	
 	private WishlistMockTestUtil() {}
 
-	public static final String wishlistItemResponseJSON =
+	public static final String wishlistItemArrayResponseJSON =
 			ResourceReader.asString(new ClassPathResource(WISHLIST_PATH + "payload-success-array_WISHLISTITEM.json"));
 	
-	public static final String wishlistItemEnrichedResponseJSON =
+	public static final String wishlistItemArrayEnrichedResponseJSON =
 			ResourceReader.asString(new ClassPathResource(WISHLIST_PATH + "payload-success-array_WISHLISTITEM_ENRICHED.json"));
+	
+	public static final String wishlistItemEnrichedResponseJSON =
+			ResourceReader.asString(new ClassPathResource(WISHLIST_PATH + "payload-success_WISHLISTITEM_ENRICHED.json"));
 }

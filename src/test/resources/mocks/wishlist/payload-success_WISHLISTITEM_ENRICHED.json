@@ -1,0 +1,9 @@
+{
+	"clientId": "1",
+	"productId": "1",
+	"product": {
+		"id": "1",
+		"name": "Televisão",
+		"price": 1500.99
+	}
+}

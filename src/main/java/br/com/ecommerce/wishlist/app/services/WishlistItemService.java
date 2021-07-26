@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import br.com.ecommerce.client.service.ClientService;
 import br.com.ecommerce.wishlist.common.exceptions.ClientNotFoundException;
 import br.com.ecommerce.wishlist.domain.wishlist.IWishlistItemRepository;
-import br.com.ecommerce.wishlist.domain.wishlist.WishlistDto;
 import br.com.ecommerce.wishlist.domain.wishlist.WishlistHelper;
 import br.com.ecommerce.wishlist.domain.wishlist.WishlistItem;
 
@@ -40,20 +39,19 @@ public class WishlistItemService {
 		return wishlistItemRepository.findProductByClientId(clientId, productId);
 	}
 	
-	public void addProductsByClient(String clientId, List<String> productIds) {
-		List<WishlistItem> wishListEnriched = wishlistEnrichService.enrichProducts(WishlistDto.of()
-				.setClientId(clientId)
-				.setProductIds(productIds));
-		
-		if (wishListEnriched != null) {
-			for (WishlistItem wishlistItem : wishListEnriched) {
-				if (hasWishlistItemByClientIdAndProductId(wishlistItem.getClientId(), wishlistItem.getProductId())) {
-					update(wishlistItem);
-				} else {
-					save(wishlistItem);
-				}
+	public WishlistItem addProductByClient(String clientId, String productId) {
+		return persist(wishlistEnrichService.enrichProduct(clientId, productId));
+	}
+
+	private WishlistItem persist(WishlistItem wishlistItemEnriched) {
+		if (wishlistItemEnriched != null) {
+			if (hasWishlistItemByClientIdAndProductId(wishlistItemEnriched.getClientId(), wishlistItemEnriched.getProductId())) {
+				return update(wishlistItemEnriched);
+			} else {
+				return save(wishlistItemEnriched);
 			}
 		}
+		return null;
 	}
 	
 	public WishlistItem save(WishlistItem wishlistItem) {

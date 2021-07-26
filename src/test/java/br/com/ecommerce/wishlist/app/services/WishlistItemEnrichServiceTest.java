@@ -2,10 +2,9 @@ package br.com.ecommerce.wishlist.app.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.times;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,6 @@ import br.com.ecommerce.product.domain.Product;
 import br.com.ecommerce.product.service.ProductService;
 import br.com.ecommerce.util.product.ProductMockTestUtil;
 import br.com.ecommerce.util.wishlist.WishlistMockTestUtil;
-import br.com.ecommerce.wishlist.domain.wishlist.WishlistDto;
 import br.com.ecommerce.wishlist.domain.wishlist.WishlistItem;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,60 +36,48 @@ public class WishlistItemEnrichServiceTest  {
 	public void tA1_testEnrichProducts_Success() {
 	    // # MOCK		
 		String clientId = "1";
-		List<String> productIds = Arrays.asList("1", "2");
-		
-		WishlistDto wishlistDto = WishlistDto.of()
-			.setClientId(clientId)
-			.setProductIds(productIds);
+		String productId = "1";
 		
 		List<Product> productsResponse= JsonFormatterComplete.jsonToArray(ProductMockTestUtil.productsArrayResponseJSON, Product.class);
 		
 		Mockito
-	    	.when(productService.findProductsByIds(wishlistDto.getProductIds()))
-	    	.thenReturn(productsResponse);
+	    	.when(productService.findProductById(productId))
+	    	.thenReturn(productsResponse.get(0));
 	    
 	    // # TEST
-		WishlistDto wishlistDtoRequest = wishlistDto;
+		String clientIdRequest = clientId;
+		String productIdRequest = productId;
 	    
-		List<WishlistItem> wishlistItemEnriched = wishlistItemEnrichService.enrichProducts(wishlistDtoRequest);
+		WishlistItem wishlistItemEnriched = wishlistItemEnrichService.enrichProduct(clientIdRequest, productIdRequest);
 		String response = JsonFormatterComplete.objectToJson(wishlistItemEnriched);
 		String expected =  WishlistMockTestUtil.wishlistItemEnrichedResponseJSON;
 		
 		assertNotNull(wishlistItemEnriched);
-		assertEquals(2, wishlistItemEnriched.size());
 	    assertEquals(JsonFormatterComplete.convert(expected), JsonFormatterComplete.convert(response));
 //	    Assert.assertEquals(expected, response);
 	    
-	    Mockito.verify(productService, times(1)).findProductsByIds(wishlistDto.getProductIds());
+	    Mockito.verify(productService, times(1)).findProductById(productId);
 	}
 	
 	@Test
 	public void tA2_testEnrichProducts_NoContent() {
 	    // # MOCK		
 		String clientId = "1";
-		List<String> productIds = Arrays.asList("3", "4");
-		
-		WishlistDto wishlistDto = WishlistDto.of()
-			.setClientId(clientId)
-			.setProductIds(productIds);
+		String productId = "3";
 		
 		Mockito
-	    	.when(productService.findProductsByIds(wishlistDto.getProductIds()))
-	    	.thenReturn(Collections.emptyList());
+	    	.when(productService.findProductById(productId))
+	    	.thenReturn(null);
 	    
 	    // # TEST
-		WishlistDto wishlistDtoRequest = wishlistDto;
-	    
-		List<WishlistItem> wishlistItemEnriched = wishlistItemEnrichService.enrichProducts(wishlistDtoRequest);
-		String response = JsonFormatterComplete.objectToJson(wishlistItemEnriched);
-		String expected =  "[]";
+		String clientIdRequest = clientId;
+		String productIdRequest = productId;
 		
-		assertNotNull(wishlistItemEnriched);
-		assertEquals(0, wishlistItemEnriched.size());
-	    assertEquals(JsonFormatterComplete.convert(expected), JsonFormatterComplete.convert(response));
-//	    assertEquals(expected, response);
+		WishlistItem wishlistItemEnriched = wishlistItemEnrichService.enrichProduct(clientIdRequest, productIdRequest);
+		
+		assertNull(wishlistItemEnriched);
 	    
-	    Mockito.verify(productService, times(1)).findProductsByIds(wishlistDto.getProductIds());
+	    Mockito.verify(productService, times(1)).findProductById(productId);
 	}
 	
 }

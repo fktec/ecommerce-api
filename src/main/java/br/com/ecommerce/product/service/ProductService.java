@@ -1,6 +1,5 @@
 package br.com.ecommerce.product.service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -15,7 +14,7 @@ import br.com.ecommerce.product.domain.Product;
 public class ProductService {
 
 	@SuppressWarnings("unchecked")
-	public List<Product> findProductsByIds(List<String> ids) {
+	public Product findProductById(String id) {
 		String productsArrayJson = ProductApiResourcesMock.productsArrayResponseJSON;
 		
 		List<Map<String, Object>> productsMap = JsonFormatterComplete.jsonToObject(productsArrayJson, List.class);
@@ -23,11 +22,10 @@ public class ProductService {
 			.map(pm -> JsonFormatterComplete.jsonToObject(JsonFormatterComplete.objectToJson(pm),Product.class))
 			.collect(Collectors.toList());
 
-		if (products != null && !products.isEmpty()) {
-			return products.stream()
-					.filter(p -> ids.contains(p.getId()))
-					.collect(Collectors.toList());
+		for (Product product : products) {
+			if (product.getId().equals(id))
+				return product;
 		}
-		return Collections.emptyList();
+		return null;
 	}
 }

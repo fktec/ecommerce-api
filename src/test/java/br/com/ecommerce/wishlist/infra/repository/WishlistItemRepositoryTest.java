@@ -29,7 +29,7 @@ public class WishlistItemRepositoryTest  {
 	public void tA1_testFindAllByClientId_Success() {
 	    // # MOCK		
 		String clientId = "1";
-		List<WishlistItem> wishlistItemsResponse = JsonFormatterComplete.jsonToArray(WishlistMockTestUtil.wishlistItemResponseJSON, WishlistItem.class);
+		List<WishlistItem> wishlistItemsResponse = JsonFormatterComplete.jsonToArray(WishlistMockTestUtil.wishlistItemArrayResponseJSON, WishlistItem.class);
 		
 	    Mockito
 	    	.when(wishlistItemRepository.findAllProductsByClientId(clientId))
@@ -54,7 +54,7 @@ public class WishlistItemRepositoryTest  {
 		String clientId = "1";
 		String productId = "2";
 		
-		List<WishlistItem> wishlistItemsResponse = JsonFormatterComplete.jsonToArray(WishlistMockTestUtil.wishlistItemResponseJSON, WishlistItem.class);
+		List<WishlistItem> wishlistItemsResponse = JsonFormatterComplete.jsonToArray(WishlistMockTestUtil.wishlistItemArrayResponseJSON, WishlistItem.class);
 		
 	    Mockito
 	    	.when(wishlistItemRepository.findProductByClientId(clientId, productId))
