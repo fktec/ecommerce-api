@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan({ "br.com.ecommerce.wishlist" })
+@ComponentScan({ "br.com.ecommerce" })
 public class EcommerceWishlistApiApplication {
 	
 	public static void main(String[] args) {
