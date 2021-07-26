@@ -46,24 +46,24 @@ public class WishlistItemService {
 		if (wishListEnriched != null) {
 			for (WishlistItem wishlistItem : wishListEnriched) {
 				if (hasWishlistItemByClientIdAndProductId(wishlistItem.getClientId(), wishlistItem.getProductId())) {
-					updateWishlistItem(wishlistItem);
+					update(wishlistItem);
 				} else {
-					saveWishlistItem(wishlistItem);
+					save(wishlistItem);
 				}
 			}
 		}
 	}
 	
-	public void saveWishlistItem(WishlistItem wishlistItem) {
+	public void save(WishlistItem wishlistItem) {
 		mongoTemplate.insert(wishlistItem);
 	}
 	
-	public void updateWishlistItem(WishlistItem currentWishlistItem) {
+	public void update(WishlistItem currentWishlistItem) {
 		WishlistItem oldwishlistItem = wishlistItemRepository.findProductByClientId(currentWishlistItem.getClientId(), currentWishlistItem.getProductId());
 		
 		if (oldwishlistItem != null) {
 			currentWishlistItem.setId(oldwishlistItem.getId());
-			mongoTemplate.save(currentWishlistItem, "wishlist_item");
+			mongoTemplate.save(currentWishlistItem, WishlistItem.DOCUMENT_NAME);
 		}
 	}
 	

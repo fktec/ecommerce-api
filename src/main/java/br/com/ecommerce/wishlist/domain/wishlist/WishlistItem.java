@@ -14,6 +14,8 @@ import br.com.ecommerce.product.domain.Product;
 @Document(collection = "wishlist_item")
 public class WishlistItem {
 
+	public static final String DOCUMENT_NAME = "wishlist_item";
+	
 	@Id
 	private String id;
 	

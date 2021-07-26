@@ -10,7 +10,4 @@ public class ClientNotFoundException extends Exception {
 		super(MessageFormat.format("Client not found by id [{0}]", clientId));
 	}
 	
-	public String getMessage() {
-		return this.getMessage();
-	}
 }
