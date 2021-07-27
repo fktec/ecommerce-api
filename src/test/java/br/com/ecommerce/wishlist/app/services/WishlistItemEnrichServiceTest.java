@@ -2,7 +2,7 @@ package br.com.ecommerce.wishlist.app.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
 
 import java.util.List;
@@ -20,6 +20,7 @@ import br.com.ecommerce.product.domain.Product;
 import br.com.ecommerce.product.service.ProductService;
 import br.com.ecommerce.util.product.ProductMockTestUtil;
 import br.com.ecommerce.util.wishlist.WishlistMockTestUtil;
+import br.com.ecommerce.wishlist.common.exceptions.ProductNotFoundException;
 import br.com.ecommerce.wishlist.domain.wishlist.WishlistItem;
 
 @ExtendWith(MockitoExtension.class)
@@ -33,7 +34,7 @@ public class WishlistItemEnrichServiceTest  {
 	private WishlistItemEnrichService wishlistItemEnrichService;
 	
 	@Test
-	public void tA1_testEnrichProducts_Success() {
+	public void tA1_testEnrichProducts_Success() throws ProductNotFoundException {
 	    // # MOCK		
 		String clientId = "1";
 		String productId = "1";
@@ -60,10 +61,11 @@ public class WishlistItemEnrichServiceTest  {
 	}
 	
 	@Test
-	public void tA2_testEnrichProducts_NoContent() {
+	public void tA2_testEnrichProducts_NoContent() throws ProductNotFoundException {
+		
 	    // # MOCK		
 		String clientId = "1";
-		String productId = "3";
+		String productId = "2";
 		
 		Mockito
 	    	.when(productService.findProductById(productId))
@@ -73,10 +75,13 @@ public class WishlistItemEnrichServiceTest  {
 		String clientIdRequest = clientId;
 		String productIdRequest = productId;
 		
-		WishlistItem wishlistItemEnriched = wishlistItemEnrichService.enrichProduct(clientIdRequest, productIdRequest);
+		Exception exception = assertThrows(ProductNotFoundException.class, () -> {
+			wishlistItemEnrichService.enrichProduct(clientIdRequest, productIdRequest);
+		});
 		
-		assertNull(wishlistItemEnriched);
-	    
+		assertNotNull(exception);
+		assertEquals("Product not found by id [2]", exception.getMessage());
+		
 	    Mockito.verify(productService, times(1)).findProductById(productId);
 	}
 	

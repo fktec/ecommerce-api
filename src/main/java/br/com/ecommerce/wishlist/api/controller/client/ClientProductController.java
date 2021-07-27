@@ -2,6 +2,8 @@ package br.com.ecommerce.wishlist.api.controller.client;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,8 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.ecommerce.wishlist.app.services.WishlistItemService;
 import br.com.ecommerce.wishlist.common.exceptions.ClientNotFoundException;
-import br.com.ecommerce.wishlist.common.exceptions.ValidationException;
+import br.com.ecommerce.wishlist.common.exceptions.ProductNotFoundException;
+import br.com.ecommerce.wishlist.common.exceptions.WishlistItemMaxCapacityException;
 import br.com.ecommerce.wishlist.domain.wishlist.WishlistItem;
+import br.com.ecommerce.wishlist.domain.wishlist.WishlistItemDto;
 
 @RestController
 @RequestMapping("clients/{clientId}/products")
@@ -27,10 +31,7 @@ public class ClientProductController {
 	private WishlistItemService wishlistService; 
 	
 	/**
-	 * TODO: OBS:
-	 * - Decidi não trabalhar com DTO's nesse momento.
-	 * 
-	 * # MELHORIAS
+	 * TODO: MELHORIAS:
 	 * - Handler exception para customizar e padronizar as mensagens de resposta.
 	 */
 	
@@ -65,19 +66,21 @@ public class ClientProductController {
 	}
 	
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> addProductByClient(@PathVariable(name = "clientId", required = true) String clientId, @RequestBody String productId) throws ValidationException {
+	public ResponseEntity<Object> addProductByClient(@PathVariable(name = "clientId", required = true) String clientId, @Valid @RequestBody WishlistItemDto wishlistItemDto) {
 		try {
 			wishlistService.checkIfClientExists(clientId);
-			wishlistService.addProductByClient(clientId, productId);
+			wishlistService.addProductByClient(clientId, wishlistItemDto);
 			return new ResponseEntity<>(HttpStatus.OK);
 			
-		} catch (ClientNotFoundException e) {
+		} catch (ClientNotFoundException | ProductNotFoundException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-		}
+		} catch (WishlistItemMaxCapacityException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		} 
 	}
 	
 	@DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> removeProductsByClient(@PathVariable(name = "clientId", required = true) String clientId, @RequestBody List<String> productIds) throws ValidationException {
+	public ResponseEntity<Object> removeProductsByClient(@PathVariable(name = "clientId", required = true) String clientId, @RequestBody List<String> productIds) {
 		wishlistService.removeProductsByClient(clientId, productIds);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
