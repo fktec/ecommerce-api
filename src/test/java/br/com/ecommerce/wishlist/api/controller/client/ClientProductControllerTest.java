@@ -288,13 +288,13 @@ public class ClientProductControllerTest  {
 	public void tD1_removeProductsByClient_NoContent() throws ClientNotFoundException {
 	    // # MOCK		
 		String clientId = "10";
-		List<String> productIds = Arrays.asList("1", "2");
+		String productId = "1";
 		
 	    // # TEST
 	    String clientIdRequest = clientId;
-	    List<String> productIdsRequest = productIds;
+	    String productIdRequest = productId;
 	    
-	    ResponseEntity<Object> response =  clientProductController.removeProductsByClient(clientIdRequest, productIdsRequest);
+	    ResponseEntity<Object> response =  clientProductController.removeProductsByClient(clientIdRequest, productIdRequest);
 	    
 	    assertNull(response.getBody());
 	    assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());

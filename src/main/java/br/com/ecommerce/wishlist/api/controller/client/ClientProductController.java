@@ -80,8 +80,8 @@ public class ClientProductController {
 	}
 	
 	@DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> removeProductsByClient(@PathVariable(name = "clientId", required = true) String clientId, @RequestBody List<String> productIds) {
-		wishlistService.removeProductsByClient(clientId, productIds);
+	public ResponseEntity<Object> removeProductsByClient(@PathVariable(name = "clientId", required = true) String clientId, @PathVariable(name = "productId", required = true) String productId) {
+		wishlistService.removeProductsByClient(clientId, productId);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 	

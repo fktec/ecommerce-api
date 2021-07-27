@@ -77,12 +77,12 @@ public class WishlistItemService {
 		return null;
 	}
 	
-	public void removeProductsByClient(String clientId, List<String> productIds) {
-		if (WishlistHelper.hasProducts(productIds)) {
+	public void removeProductsByClient(String clientId, String productId) {
+		if (WishlistHelper.hasProduct(productId)) {
 			mongoTemplate.remove(
 					Query.query(Criteria
 							.where("clientId").is(clientId)
-							.and("productId").in(productIds)), 
+							.and("productId").is(productId)), 
 					WishlistItem.class);
 		}
 	}
