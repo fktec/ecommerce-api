@@ -24,3 +24,4 @@ cliente;
 - Legibilidade Testes = Devido ao uso do MOCKITO ser bastante verboso.
 - Autenticação = Disponibilizando autenticação (OAUTH2)
 - Docker File = Para gerar a aplicação em um container
+- Logs = Gerar logs em pontos de importância na aplicação.
