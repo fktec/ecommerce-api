@@ -32,7 +32,7 @@ public class ClientProductController {
 	
 	/**
 	 * TODO: MELHORIAS:
-	 * - Handler exception para customizar e padronizar as mensagens de resposta.
+	 * - Handler exception para customizar e padronizar as mensagens de resposta. (por isso, algumas respostas estão como OBJECT, devido a geração das mensagens de erro, enquanto isso)
 	 */
 	
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)

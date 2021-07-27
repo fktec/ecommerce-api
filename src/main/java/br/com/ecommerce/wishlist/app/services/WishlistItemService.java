@@ -99,7 +99,7 @@ public class WishlistItemService {
 	
 	public void checkIfMaxCapacity(String clientId) throws WishlistItemMaxCapacityException {
 		if (wishlistItemMaxCapacity <= wishlistItemRepository.countByClientId(clientId)) {
-			throw new WishlistItemMaxCapacityException();
+			throw new WishlistItemMaxCapacityException(wishlistItemMaxCapacity);
 		}
 	}
 	

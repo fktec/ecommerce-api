@@ -22,6 +22,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
@@ -45,6 +46,9 @@ public class ClientProductControllerTest  {
 	
 	@InjectMocks
 	private ClientProductController clientProductController;
+	
+	@Value("${rn.wishlist.item.max-capacity}")
+	private Integer wishlistItemMaxCapacity;
 	
 	@BeforeEach
     public void setup() {
@@ -266,7 +270,7 @@ public class ClientProductControllerTest  {
 		String productId = "1";
 		
 		 Mockito
-		 	.doThrow(new WishlistItemMaxCapacityException())
+		 	.doThrow(new WishlistItemMaxCapacityException(wishlistItemMaxCapacity))
 		 	.when(wishlistItemService).addProductByClient(ArgumentMatchers.eq(clientId), ArgumentMatchers.any(WishlistItemDto.class));
 		
 	    // # TEST
@@ -277,7 +281,7 @@ public class ClientProductControllerTest  {
 	    ResponseEntity<Object> response =  clientProductController.addProductByClient(clientIdRequest, wishlistItemDtoRequest);
 	    
 	    assertNotNull(response);
-	    assertEquals("Cannot add new products to favorites list", response.getBody());
+	    assertEquals("Cannot add new products to favorites list - limit [{0}]", response.getBody());
 	    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 	}
 	
