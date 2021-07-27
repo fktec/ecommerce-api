@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -22,7 +23,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
@@ -47,12 +47,11 @@ public class ClientProductControllerTest  {
 	@InjectMocks
 	private ClientProductController clientProductController;
 	
-	@Value("${rn.wishlist.item.max-capacity}")
-	private Integer wishlistItemMaxCapacity;
+	private Integer wishlistItemMaxCapacity = 20;
 	
 	@BeforeEach
     public void setup() {
-		ReflectionTestUtils.setField(wishlistItemService, "wishlistItemMaxCapacity", 20);
+		ReflectionTestUtils.setField(wishlistItemService, "wishlistItemMaxCapacity", wishlistItemMaxCapacity);
     }
 	
 	@SuppressWarnings("unchecked")
@@ -281,7 +280,7 @@ public class ClientProductControllerTest  {
 	    ResponseEntity<Object> response =  clientProductController.addProductByClient(clientIdRequest, wishlistItemDtoRequest);
 	    
 	    assertNotNull(response);
-	    assertEquals("Cannot add new products to favorites list - limit [{0}]", response.getBody());
+	    assertEquals(MessageFormat.format("Cannot add new products to favorites list - limit [{0}]", wishlistItemMaxCapacity), response.getBody());
 	    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 	}
 	
