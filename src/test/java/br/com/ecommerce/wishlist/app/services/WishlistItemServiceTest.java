@@ -17,8 +17,10 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import br.com.ecommerce.client.service.ClientService;
 import br.com.ecommerce.mock.util.JsonFormatterComplete;
 import br.com.ecommerce.util.wishlist.WishlistMockTestUtil;
+import br.com.ecommerce.wishlist.common.exceptions.ClientNotFoundException;
 import br.com.ecommerce.wishlist.common.exceptions.ProductNotFoundException;
 import br.com.ecommerce.wishlist.common.exceptions.WishlistItemMaxCapacityException;
 import br.com.ecommerce.wishlist.domain.wishlist.IWishlistItemRepository;
@@ -38,8 +40,12 @@ public class WishlistItemServiceTest  {
 	@Mock
 	private WishlistItemEnrichService wishlistItemEnrichService;
 	
+	@Mock
+	private ClientService clientService;
+	
 	@InjectMocks
 	private WishlistItemService wishlistItemService;
+	
 	
 	@BeforeEach
     public void setup() {
@@ -47,12 +53,17 @@ public class WishlistItemServiceTest  {
     }
 	
 	@Test
-	public void tA1_addProductsByClient_SaveSuccess() throws ProductNotFoundException, WishlistItemMaxCapacityException {
+	public void tA1_addProductsByClient_SaveSuccess() throws ProductNotFoundException, WishlistItemMaxCapacityException, ClientNotFoundException {
 	    // # MOCK		
 		String clientId = "1";
 		String productId ="1";
 		List<WishlistItem> wishlistItemEnrichedResponse = JsonFormatterComplete.jsonToArray(WishlistMockTestUtil.wishlistItemArrayEnrichedResponseJSON, WishlistItem.class);
 		
+		// # MOCK		
+		Mockito.lenient()
+	    	.when(clientService.clientExists(clientId))
+	    	.thenReturn(true);
+				
 		Mockito.lenient()
 	    	.when(wishlistItemRepository.countByClientIdAndProductId(clientId, productId))
 	    	.thenReturn(0l);
@@ -73,10 +84,15 @@ public class WishlistItemServiceTest  {
 	}
 	
 	@Test
-	public void tA2_addProductsByClient_UpdateSuccess() throws ProductNotFoundException, WishlistItemMaxCapacityException {
+	public void tA2_addProductsByClient_UpdateSuccess() throws ProductNotFoundException, WishlistItemMaxCapacityException, ClientNotFoundException {
 	    // # MOCK		
 		String clientId = "1";
 		String productId ="1";
+		
+		// # MOCK		
+		Mockito.lenient()
+	    	.when(clientService.clientExists(clientId))
+	    	.thenReturn(true);
 //		
 	    Mockito.lenient()
 	    	.when(wishlistItemRepository.countByClientIdAndProductId(clientId, productId))
@@ -104,14 +120,20 @@ public class WishlistItemServiceTest  {
 	}
 	
 	@Test
-	public void tA3_addProductsByClient_Fail() throws ProductNotFoundException, WishlistItemMaxCapacityException {
-	    // # MOCK		
+	public void tA3_addProductsByClient_Fail() throws ProductNotFoundException, WishlistItemMaxCapacityException, ClientNotFoundException {
+		String clientId = "1";
+		
+		// # MOCK		
 		Mockito.lenient()
-	    	.when(wishlistItemEnrichService.enrichProduct(null, null))
+	    	.when(clientService.clientExists(clientId))
+	    	.thenReturn(true);
+		
+		Mockito.lenient()
+	    	.when(wishlistItemEnrichService.enrichProduct(clientId, null))
 	    	.thenReturn(null);
 //	    
 	    // # TEST
-	    wishlistItemService.addProductByClient(null, null);
+	    wishlistItemService.addProductByClient(clientId, null);
 
 	    ArgumentCaptor<WishlistItem> argument = ArgumentCaptor.forClass(WishlistItem.class);
 	    Mockito.verify(mongoTemplate, times(0)).insert(argument.capture());

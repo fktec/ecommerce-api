@@ -3,9 +3,9 @@ package br.com.ecommerce.wishlist.api.controller.client;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.text.MessageFormat;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -56,7 +56,7 @@ public class ClientProductControllerTest  {
 	
 	@SuppressWarnings("unchecked")
 	@Test
-	public void tA1_getAllProductsByClient_Ok() {
+	public void tA1_getAllProductsByClient_Ok() throws ClientNotFoundException {
 	    // # MOCK		
 		String clientId = "1";
 		List<WishlistItem> wishlistItemsResponse = JsonFormatterComplete.jsonToArray(WishlistMockTestUtil.wishlistItemArrayResponseJSON, WishlistItem.class);
@@ -79,7 +79,7 @@ public class ClientProductControllerTest  {
 	
 	@SuppressWarnings("unchecked")
 	@Test
-	public void tA2_getAllProductsByClient_NoContent() {
+	public void tA2_getAllProductsByClient_NoContent() throws ClientNotFoundException {
 	    // # MOCK		
 		String clientId = "1";
 		
@@ -103,22 +103,19 @@ public class ClientProductControllerTest  {
 	    // # MOCK		
 		String clientId = "10";
 		
-		 Mockito
-		 	.doThrow(new ClientNotFoundException(clientId))
-	    	.when(wishlistItemService).checkIfClientExists(clientId);
+		Mockito
+		 	.doThrow(new ClientNotFoundException())
+			.when(wishlistItemService).findAllProductsByClientId(clientId);
 		
-	    // # TEST
-	    String clientIdRequest = clientId;
-	    
-	    ResponseEntity<Object> response =  clientProductController.getAllProductsByClient(clientIdRequest);
-	    
-	    assertNotNull(response);
-	    assertEquals("Client not found by id [10]", response.getBody());
-	    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+	    Exception exception = assertThrows(ClientNotFoundException.class, () -> {
+	    	clientProductController.getAllProductsByClient(clientId);
+	    });
+
+	    assertNotNull(exception);
 	}
 	
 	@Test
-	public void tB1_getProductByClient_Ok() {
+	public void tB1_getProductByClient_Ok() throws ClientNotFoundException {
 	    // # MOCK		
 		String clientId = "1";
 		String productId = "1";
@@ -141,7 +138,7 @@ public class ClientProductControllerTest  {
 	}
 	
 	@Test
-	public void tB2_getProductByClient_NotFound() {
+	public void tB2_getProductByClient_NotFound() throws ClientNotFoundException {
 	    // # MOCK		
 		String clientId = "1";
 		String productId = "1";
@@ -162,24 +159,20 @@ public class ClientProductControllerTest  {
 	}
 	
 	@Test
-	public void tB3_getProductByClient_ClientNotFound() throws ClientNotFoundException {
+	public void tB3_getProductByClient_ClientNotFound() throws ClientNotFoundException  {
 	    // # MOCK		
 		String clientId = "10";
 		String productId = "1";
 		
 		 Mockito
-		 	.doThrow(new ClientNotFoundException(clientId))
-	    	.when(wishlistItemService).checkIfClientExists(clientId);
+		 	.doThrow(new ClientNotFoundException())
+	    	.when(wishlistItemService).findProductByClientId(clientId, productId);
 		
-	    // # TEST
-	    String clientIdRequest = clientId;
-	    String productIdRequest = productId;
-	    
-	    ResponseEntity<Object> response =  clientProductController.getProductByClient(clientIdRequest, productIdRequest);
-	    
-	    assertNotNull(response);
-	    assertEquals("Client not found by id [10]", response.getBody());
-	    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+		try {
+			clientProductController.getProductByClient(clientId, productId);
+		} catch (ClientNotFoundException e) {
+			 assertNotNull(e);
+		}
 	}
 	
 	@Test
@@ -206,13 +199,13 @@ public class ClientProductControllerTest  {
 	}
 	
 	@Test
-	public void tC2_addProductByClient_ProductNotFound() throws ClientNotFoundException, ProductNotFoundException, WishlistItemMaxCapacityException {
+	public void tC2_addProductByClient_ProductNotFound() throws ClientNotFoundException, WishlistItemMaxCapacityException, ProductNotFoundException {
 	    // # MOCK		
 		String clientId = "10";
 		String productId = "999";
 		
 		 Mockito.lenient()
-		 	.doThrow(new ProductNotFoundException(productId))
+		 	.doThrow(new ProductNotFoundException())
 	    	.when(wishlistItemService).addProductByClient(ArgumentMatchers.eq(clientId), ArgumentMatchers.any(WishlistItemDto.class));
 		 
 	    // # TEST
@@ -220,33 +213,29 @@ public class ClientProductControllerTest  {
 	    String productIdRequest = productId;
 	    WishlistItemDto wishlistItemDtoRequest = WishlistItemDto.of().setProductId(productIdRequest);
 	    
-	    ResponseEntity<Object> response =  clientProductController.addProductByClient(clientIdRequest, wishlistItemDtoRequest);
-	    
-	    assertNotNull(response);
-	    assertEquals("Product not found by id [999]", response.getBody());
-	    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+	    Exception exception = assertThrows(ProductNotFoundException.class, () -> {
+	    	clientProductController.addProductByClient(clientIdRequest, wishlistItemDtoRequest);
+	    });
+
+	    assertNotNull(exception);
 	}
 	
 	@Test
-	public void tC3_addProductByClient_ClientNotFound() throws ClientNotFoundException {
+	public void tC3_addProductByClient_ClientNotFound() throws  ProductNotFoundException, ClientNotFoundException, WishlistItemMaxCapacityException {
 	    // # MOCK		
 		String clientId = "10";
 		String productId = "1";
+		WishlistItemDto wishlistItemDtoRequest = WishlistItemDto.of().setProductId(productId);
 		
 		 Mockito
-		 	.doThrow(new ClientNotFoundException(clientId))
-	    	.when(wishlistItemService).checkIfClientExists(clientId);
+		 	.doThrow(new ClientNotFoundException())
+	    	.when(wishlistItemService).addProductByClient(clientId, wishlistItemDtoRequest);
 		
-	    // # TEST
-	    String clientIdRequest = clientId;
-	    String productIdRequest = productId;
-	    WishlistItemDto wishlistItemDtoRequest = WishlistItemDto.of().setProductId(productIdRequest);
+		 Exception exception = assertThrows(ClientNotFoundException.class, () -> {
+			 clientProductController.addProductByClient(clientId, wishlistItemDtoRequest);
+		 });
 	    
-	    ResponseEntity<Object> response =  clientProductController.addProductByClient(clientIdRequest, wishlistItemDtoRequest);
-	    
-	    assertNotNull(response);
-	    assertEquals("Client not found by id [10]", response.getBody());
-	    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+		assertNotNull(exception);
 	}
 	
 	@Test

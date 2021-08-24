@@ -80,8 +80,6 @@ public class WishlistItemEnrichServiceTest  {
 		});
 		
 		assertNotNull(exception);
-		assertEquals("Product not found by id [2]", exception.getMessage());
-		
 	    Mockito.verify(productService, times(1)).findProductById(productId);
 	}
 	
