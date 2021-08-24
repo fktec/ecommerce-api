@@ -1,39 +1,26 @@
 package br.com.ecommerce.client.service;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import br.com.ecommerce.client.domain.Client;
-import br.com.ecommerce.mock.product.ClientApiResourcesMock;
-import br.com.ecommerce.mock.util.JsonFormatterComplete;
+import br.com.ecommerce.client.domain.IClientRepository;
 
 @Service
 public class ClientService {
 
-	@SuppressWarnings("unchecked")
+	@Autowired
+	@Qualifier("ClientRepository")
+	private IClientRepository clientRepository;
+	
 	public List<Client> findClientsByIds(List<String> ids) {
-		String clientsArrayJson = ClientApiResourcesMock.clientsArrayResponseJSON;
-		
-		List<Map<String, Object>> clientsMap = JsonFormatterComplete.jsonToObject(clientsArrayJson, List.class);
-		List<Client> clients = clientsMap.stream()
-			.map(v -> JsonFormatterComplete.jsonToObject(JsonFormatterComplete.objectToJson(v), Client.class))
-			.collect(Collectors.toList());
-
-		if (clients != null && !clients.isEmpty()) {
-			return clients.stream()
-					.filter(p -> ids.contains(p.getId()))
-					.collect(Collectors.toList());
-		}
-		return Collections.emptyList();
+		return clientRepository.findClientsByIds(ids);
 	}
 	
 	public boolean clientExists(String clientId) {
-		List<Client> clients = findClientsByIds(Arrays.asList(clientId));
-		return clients != null && !clients.isEmpty();
+		return clientRepository.clientExists(clientId);
 	}
 }

@@ -33,47 +33,33 @@ public class ClientProductController {
 	/**
 	 * TODO: MELHORIAS:
 	 * - Handler exception para customizar e padronizar as mensagens de resposta. (por isso, algumas respostas estão como OBJECT, devido a geração das mensagens de erro, enquanto isso)
+	 * @throws ClientNotFoundException 
 	 */
 	
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> getAllProductsByClient(@PathVariable(name = "clientId", required = true) String clientId) {
-		try {
-			wishlistService.checkIfClientExists(clientId);
-			List<WishlistItem> wishlistItems = wishlistService.findAllProductsByClientId(clientId);
-			
-			if (wishlistItems == null || wishlistItems.isEmpty()) 
-				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-			return  new ResponseEntity<>(wishlistItems, HttpStatus.OK);
-			
-		} catch (ClientNotFoundException e) {
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-		}
+	public ResponseEntity<Object> getAllProductsByClient(@PathVariable(name = "clientId", required = true) String clientId) throws ClientNotFoundException {
+		List<WishlistItem> wishlistItems = wishlistService.findAllProductsByClientId(clientId);
+		
+		if (wishlistItems == null || wishlistItems.isEmpty()) 
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		return  new ResponseEntity<>(wishlistItems, HttpStatus.OK);
 	}
 	
 	@GetMapping(path = "/{productId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> getProductByClient(@PathVariable(name = "clientId", required = true) String clientId, @PathVariable(name = "productId", required = true) String productId) {
-		try {
-			wishlistService.checkIfClientExists(clientId);
-			final WishlistItem wishlistItem = wishlistService.findProductByClientId(clientId, productId);
+	public ResponseEntity<Object> getProductByClient(@PathVariable(name = "clientId", required = true) String clientId, @PathVariable(name = "productId", required = true) String productId) throws ClientNotFoundException {
+		WishlistItem wishlistItem =  wishlistService.findProductByClientId(clientId, productId);
 			
-			if (wishlistItem == null) 
-				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-			return  new ResponseEntity<>(wishlistItem, HttpStatus.OK);
-			
-		} catch (ClientNotFoundException e) {
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-		}
+		if (wishlistItem == null) 
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		return  new ResponseEntity<>(wishlistItem, HttpStatus.OK);
 	}
 	
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> addProductByClient(@PathVariable(name = "clientId", required = true) String clientId, @Valid @RequestBody WishlistItemDto wishlistItemDto) {
+	public ResponseEntity<Object> addProductByClient(@PathVariable(name = "clientId", required = true) String clientId, @Valid @RequestBody WishlistItemDto wishlistItemDto) throws ProductNotFoundException, ClientNotFoundException {
 		try {
-			wishlistService.checkIfClientExists(clientId);
 			wishlistService.addProductByClient(clientId, wishlistItemDto);
 			return new ResponseEntity<>(HttpStatus.OK);
 			
-		} catch (ClientNotFoundException | ProductNotFoundException e) {
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
 		} catch (WishlistItemMaxCapacityException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		} 

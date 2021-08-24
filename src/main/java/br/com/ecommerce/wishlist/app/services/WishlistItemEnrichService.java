@@ -25,7 +25,7 @@ public class WishlistItemEnrichService {
 				.setProductId(product.getId())
 				.enrichProduct(product);
 		} else {
-			throw new ProductNotFoundException(productId);
+			throw new ProductNotFoundException();
 		}
 	}
 	

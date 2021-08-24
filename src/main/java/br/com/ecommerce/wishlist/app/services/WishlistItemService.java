@@ -38,15 +38,18 @@ public class WishlistItemService {
 	@Value("${rn.wishlist.item.max-capacity}")
 	private Integer wishlistItemMaxCapacity;
 	
-	public List<WishlistItem> findAllProductsByClientId(String clientId) {
+	public List<WishlistItem> findAllProductsByClientId(String clientId) throws ClientNotFoundException {
+		checkIfClientExists(clientId);
 		return wishlistItemRepository.findAllProductsByClientId(clientId);
 	}
 	
-	public WishlistItem findProductByClientId(String clientId, String productId) {
+	public WishlistItem findProductByClientId(String clientId, String productId) throws ClientNotFoundException {
+		checkIfClientExists(clientId);
 		return wishlistItemRepository.findProductByClientId(clientId, productId);
 	}
 	
-	public WishlistItem addProductByClient(String clientId, WishlistItemDto wishlistItemDto) throws ProductNotFoundException, WishlistItemMaxCapacityException {
+	public WishlistItem addProductByClient(String clientId, WishlistItemDto wishlistItemDto) throws ProductNotFoundException, WishlistItemMaxCapacityException, ClientNotFoundException {
+		checkIfClientExists(clientId);
 		if (wishlistItemDto == null) return null;
 		checkIfMaxCapacity(clientId);
 		return persist(wishlistEnrichService.enrichProduct(clientId, wishlistItemDto.getProductId()));
@@ -93,7 +96,7 @@ public class WishlistItemService {
 	
 	public void checkIfClientExists(String clientId) throws ClientNotFoundException {
 		if (!clientService.clientExists(clientId)) {
-			throw new ClientNotFoundException(clientId);
+			throw new ClientNotFoundException();
 		}
 	}
 	
