@@ -1,0 +1,146 @@
+openapi: 3.0.1
+info:
+  title: E-Commerce Wishlist API
+  version: v1
+servers:
+  - url: 'http://localhost:8080/ecommerce-wishlist-api/wishlist'
+    description: Generated server url
+paths:
+  '/clients/{clientId}/products':
+    get:
+      tags:
+        - client-product-controller
+      parameters:
+        - name: clientId
+          schema:
+            type: string
+          in: path
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WishlistItem'
+          description: Item adiciona ou atualizado na lista
+        '204':
+          description: No content
+        '404':
+          description: Cliente não encontrado.
+      operationId: getAllProductsByClient
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WishlistItemDto'
+        required: true
+      tags:
+        - client-product-controller
+      parameters:
+        - name: clientId
+          schema:
+            type: string
+          in: path
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+          description: OK
+        '400':
+          description: Não é possível adicionar novos items na lista de favoritos do cliente.
+        '404':
+          description: Cliente não encontrado.
+      operationId: addProductByClient
+  '/clients/{clientId}/products/{productId}':
+    get:
+      tags:
+        - client-product-controller
+      parameters:
+        - name: clientId
+          schema:
+            type: string
+          in: path
+          required: true
+        - name: productId
+          schema:
+            type: string
+          in: path
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WishlistItem'
+          description: OK
+        '404':
+          description: Produto não localizado.
+      operationId: getProductByClient
+    delete:
+      tags:
+        - client-product-controller
+      parameters:
+        - name: clientId
+          schema:
+            type: string
+          in: path
+          required: true
+        - name: productId
+          schema:
+            type: string
+          in: path
+          required: true
+      responses:
+        '204':
+          description: No content
+      operationId: removeProductsByClient
+components:
+  schemas:
+    WishlistItemDto:
+      required:
+        - productId
+      type: object
+      properties:
+        productId:
+          type: string
+    WishlistItem:
+      title: Root Type for WishlistItem
+      description: ''
+      type: object
+      properties:
+        id:
+          type: string
+        clientId:
+          type: string
+        productId:
+          type: string
+        product:
+          type: object
+          properties:
+            name:
+              type: string
+            price:
+              format: double
+              type: number
+      example:
+        id: string
+        clientId: string
+        productId: string
+        product:
+          name: string
+          price: 99.99
+  responses:
+    WishlistProducts:
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/WishlistItem'
+      description: ''
