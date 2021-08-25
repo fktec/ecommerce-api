@@ -16,12 +16,12 @@ do produto.
 cliente;
 
 ### Recursos (Dicas)
-- MONGODB: docker run -d --name some-mongo -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=admin -e MONGO_INITDB_ROOT_PASSWORD=admin mongo
+- Docker File
+- Docker Compose
 
 ### Algumas melhorias possíveis
 - Handler exception = Para padronizar todas as respostas de erro do componente.
 - Cachê = Ativar a opção de cachê nas consultas
 - Legibilidade Testes = Devido ao uso do MOCKITO ser bastante verboso.
 - Autenticação = Disponibilizando autenticação (OAUTH2)
-- Docker File = Para gerar a aplicação em um container
 - Logs = Gerar logs em pontos de importância na aplicação.
