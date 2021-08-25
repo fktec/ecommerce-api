@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.ecommerce.wishlist.app.services.WishlistItemService;
 import br.com.ecommerce.wishlist.common.exceptions.ClientNotFoundException;
 import br.com.ecommerce.wishlist.common.exceptions.ProductNotFoundException;
-import br.com.ecommerce.wishlist.common.exceptions.WishlistItemMaxCapacityException;
 import br.com.ecommerce.wishlist.domain.wishlist.WishlistItem;
 import br.com.ecommerce.wishlist.domain.wishlist.WishlistItemDto;
 
@@ -56,13 +55,8 @@ public class ClientProductController {
 	
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> addProductByClient(@PathVariable(name = "clientId", required = true) String clientId, @Valid @RequestBody WishlistItemDto wishlistItemDto) throws ProductNotFoundException, ClientNotFoundException {
-		try {
-			wishlistService.addProductByClient(clientId, wishlistItemDto);
-			return new ResponseEntity<>(HttpStatus.OK);
-			
-		} catch (WishlistItemMaxCapacityException e) {
-			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-		} 
+		wishlistService.addProductByClient(clientId, wishlistItemDto);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
 	@DeleteMapping(path = "/{productId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

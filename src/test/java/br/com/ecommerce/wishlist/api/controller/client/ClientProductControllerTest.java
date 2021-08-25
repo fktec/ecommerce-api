@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -266,11 +265,11 @@ public class ClientProductControllerTest  {
 	    String productIdRequest = productId;
 	    WishlistItemDto wishlistItemDtoRequest = WishlistItemDto.of().setProductId(productIdRequest);
 	    
-	    ResponseEntity<Object> response =  clientProductController.addProductByClient(clientIdRequest, wishlistItemDtoRequest);
+	    Exception exception = assertThrows(WishlistItemMaxCapacityException.class, () -> {
+	    	clientProductController.addProductByClient(clientIdRequest, wishlistItemDtoRequest);
+	    });
 	    
-	    assertNotNull(response);
-	    assertEquals(MessageFormat.format("Cannot add new products to favorites list - limit [{0}]", wishlistItemMaxCapacity), response.getBody());
-	    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+	    assertNotNull(exception);
 	}
 	
 	@Test
